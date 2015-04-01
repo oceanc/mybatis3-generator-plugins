@@ -20,7 +20,7 @@ import java.util.Locale;
 /**
  * Created by chengyang
  */
-public class PartitionTablePlugin extends PluginAdapter {
+public class SliceTablePlugin extends PluginAdapter {
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -334,13 +334,13 @@ public class PartitionTablePlugin extends PluginAdapter {
         return true;
     }
 
-    private Logger log = LoggerFactory.getLogger(PartitionTablePlugin.class);
+    private Logger log = LoggerFactory.getLogger(SliceTablePlugin.class);
 
     private final SimpleDateFormat df = new SimpleDateFormat("EEE MMM ww HH:mm:ss z yyyy", Locale.US);
 
-    private final static String REL_COLUMN = "relColumn";
-    private final static String MOD_VALUE = "mod";
-    private final static String TIME_VALUE = "month";
+    private final static String REL_COLUMN = "sliceColumn";
+    private final static String MOD_VALUE = "sliceMod";
+    private final static String TIME_VALUE = "sliceMonth";
     private final static String SUFFIX_FIELD = "tableNameSuffix";
 
     private final static FullyQualifiedJavaType STRING_TYPE = new FullyQualifiedJavaType("java.lang.String");
