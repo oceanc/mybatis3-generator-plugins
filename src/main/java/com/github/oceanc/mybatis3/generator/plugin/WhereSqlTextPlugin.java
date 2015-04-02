@@ -1,4 +1,4 @@
-package oceanc.generator.mybatis3.plugin;
+package com.github.oceanc.mybatis3.generator.plugin;
 
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
