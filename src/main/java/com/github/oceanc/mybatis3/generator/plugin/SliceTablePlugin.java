@@ -123,12 +123,13 @@ public class SliceTablePlugin extends PluginAdapter {
                         System.err.printf("month value should in [1-12]!!!!!!");
                         throw new IllegalArgumentException("month value should in [1-12]!!!!!!");
                     }
-                    String[] expression = new String[5];
+                    String[] expression = new String[6];
                     expression[0] = "if (this." + field + " != null ) {";
                     expression[1] = "Calendar calendar = Calendar.getInstance();";
-                    expression[2] = "int m = calendar.get(Calendar.MONTH) + 1;";
-                    expression[3] = "this." + SUFFIX_FIELD + " = calendar.get(Calendar.YEAR) + (m < 10 ? \"0\" + m : \"\" + m);";
-                    expression[4] = "}";
+                    expression[2] = "calendar.setTimeInMillis(" + field + ".getTime());";
+                    expression[3] = "int m = calendar.get(Calendar.MONTH) + 1;";
+                    expression[4] = "this." + SUFFIX_FIELD + " = calendar.get(Calendar.YEAR) + (m < 10 ? \"0\" + m : \"\" + m);";
+                    expression[5] = "}";
                     method.addBodyLines(Arrays.asList(expression));
                     topLevelClass.addImportedType(CALENDAR_TYPE);
                     log.debug("{} modify method {} for update field {}", topLevelClass.getType().getShortName(), method.getName(), SUFFIX_FIELD);
@@ -238,7 +239,7 @@ public class SliceTablePlugin extends PluginAdapter {
         String name = camelcase(column.split(UNDERLINE));
         if (configuration.getColumnOverride(column) != null) {
             name = configuration.getColumnOverride(column).getJavaProperty();
-        } else if(configuration.getColumnRenamingRule() != null) {
+        } else if (configuration.getColumnRenamingRule() != null) {
             String search = configuration.getColumnRenamingRule().getSearchString();
             String replace = configuration.getColumnRenamingRule().getReplaceString();
             name = column.replaceAll(search, replace);
@@ -248,7 +249,7 @@ public class SliceTablePlugin extends PluginAdapter {
 
     private static String camelcase(String[] words) {
         StringBuilder sb = new StringBuilder(words[0].toLowerCase());
-        for (int i = 1; i < words.length; i ++) {
+        for (int i = 1; i < words.length; i++) {
             sb.append(words[i].substring(0, 1));
             if (words[i].length() > 1) {
                 sb.append(words[i].substring(1, words[i].length()).toLowerCase());
@@ -306,15 +307,15 @@ public class SliceTablePlugin extends PluginAdapter {
                 String dynamicTableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
                 String baseName = dynamicTableName.substring(0, dynamicTableName.lastIndexOf(UNDERLINE));
 
-                StringBuilder sfx = new StringBuilder("<choose>");
-                sfx.append("<when test=\"record.").append(SUFFIX_FIELD).append(" != null\">").append(baseName).append("_${record.").append(SUFFIX_FIELD).append("}</when>");
-                sfx.append("<when test=\"example.").append(SUFFIX_FIELD).append(" != null\">").append(baseName).append("_${example.").append(SUFFIX_FIELD).append("}</when>");
-                sfx.append("<otherwise>").append(baseName).append("_ </otherwise>");
-                sfx.append("</choose>");
+                String sfx = "<choose>";
+                sfx += "<when test=\"record." + SUFFIX_FIELD + " != null\">" + baseName + "_${record." + SUFFIX_FIELD + "}</when>";
+                sfx += "<when test=\"example." + SUFFIX_FIELD + " != null\">" + baseName + "_${example." + SUFFIX_FIELD + "}</when>";
+                sfx += "<otherwise>" + baseName + "_ </otherwise>";
+                sfx += "</choose>";
 
                 java.lang.reflect.Field field = sqlhead.getClass().getDeclaredField("content");
                 field.setAccessible(true);
-                field.set(sqlhead, "update " + sfx.toString());
+                field.set(sqlhead, "update " + sfx);
 
                 log.debug("generate dynamic table name base on {} in sql xml", baseName);
             } catch (NoSuchFieldException e) {
