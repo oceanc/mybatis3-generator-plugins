@@ -28,21 +28,22 @@ public class JacksonToJsonPlugin extends PluginAdapter {
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setReturnType(FullyQualifiedJavaType.getStringInstance());
         method.addException(new FullyQualifiedJavaType("java.io.IOException"));
-        method.addBodyLine("StringWriter writer = new StringWriter();");
-        method.addBodyLine("JsonGenerator generator = new JsonFactory().createGenerator(writer);");
+//        method.addBodyLine("StringWriter writer = new StringWriter();");
+//        method.addBodyLine("JsonGenerator generator = new JsonFactory().createGenerator(writer);");
         method.addBodyLine("ObjectMapper mapper = new ObjectMapper();");
         method.addBodyLine("mapper.setTimeZone(TimeZone.getDefault());");
-        method.addBodyLine("generator.setCodec(mapper);");
-        method.addBodyLine("generator.writeObject(this);");
-        method.addBodyLine("generator.close();");
-        method.addBodyLine("writer.close();");
-        method.addBodyLine("return writer.toString();");
+        method.addBodyLine("return mapper.writeValueAsString(this);");
+//        method.addBodyLine("generator.setCodec(mapper);");
+//        method.addBodyLine("generator.writeObject(this);");
+//        method.addBodyLine("generator.close();");
+//        method.addBodyLine("writer.close();");
+//        method.addBodyLine("return writer.toString();");
         this.addDoc(method, introspectedTable.getFullyQualifiedTableNameAtRuntime());
 
         topLevelClass.addImportedType(new FullyQualifiedJavaType("java.io.IOException"));
-        topLevelClass.addImportedType(new FullyQualifiedJavaType("java.io.StringWriter"));
-        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.core.JsonFactory"));
-        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.core.JsonGenerator"));
+//        topLevelClass.addImportedType(new FullyQualifiedJavaType("java.io.StringWriter"));
+//        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.core.JsonFactory"));
+//        topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.core.JsonGenerator"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.databind.ObjectMapper"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("java.util.TimeZone"));
 
