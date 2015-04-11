@@ -30,7 +30,9 @@ public class JacksonToJsonPlugin extends PluginAdapter {
         method.addException(new FullyQualifiedJavaType("java.io.IOException"));
         method.addBodyLine("StringWriter writer = new StringWriter();");
         method.addBodyLine("JsonGenerator generator = new JsonFactory().createGenerator(writer);");
-        method.addBodyLine("generator.setCodec(new ObjectMapper());");
+        method.addBodyLine("ObjectMapper mapper = new ObjectMapper();");
+        method.addBodyLine("mapper.setTimeZone(TimeZone.getDefault());");
+        method.addBodyLine("generator.setCodec(mapper);");
         method.addBodyLine("generator.writeObject(this);");
         method.addBodyLine("generator.close();");
         method.addBodyLine("writer.close();");
@@ -42,6 +44,7 @@ public class JacksonToJsonPlugin extends PluginAdapter {
         topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.core.JsonFactory"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.core.JsonGenerator"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.databind.ObjectMapper"));
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("java.util.TimeZone"));
 
         topLevelClass.addMethod(method);
 
