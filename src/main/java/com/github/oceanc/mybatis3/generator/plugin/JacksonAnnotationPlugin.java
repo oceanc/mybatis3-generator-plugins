@@ -58,11 +58,10 @@ public class JacksonAnnotationPlugin extends PluginAdapter {
     private String annotateFormat(IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable) {
         String fmts = introspectedTable.getTableConfigurationProperty(JACKSON_FORMATS);
         if (fmts != null && !"".equals(fmts)) {
-            String[] formats = fmts.split(DELIMITER);
-            for (String format : formats) {
-                String[] aaa = format.split(DELIMITER_FORMAT);
-                String column = aaa[0].trim();
-                String anno = aaa[1].trim();
+            String[] formats = fmts.split(DELIMITER_FORMAT);
+            String anno = formats[1];
+            String[] columns = formats[0].split(DELIMITER);
+            for (String column : columns) {
                 if (column.equals(introspectedColumn.getActualColumnName())) {
                     return anno;
                 }
