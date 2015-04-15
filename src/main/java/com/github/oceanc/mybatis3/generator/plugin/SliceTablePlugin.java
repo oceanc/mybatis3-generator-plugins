@@ -8,8 +8,6 @@ import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.TableConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -48,13 +46,27 @@ public class SliceTablePlugin extends PluginAdapter {
             String relColumn = introspectedTable.getTableConfigurationProperty(REL_COLUMN);
             String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
             String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
+            String fieldName = convertColumnName(relColumn, introspectedTable.getTableConfiguration());
+
             if (modValue != null && !"".equals(modValue)) {
-                String fieldName = convertColumnName(relColumn, introspectedTable.getTableConfiguration());
+                FullyQualifiedJavaType ptype = STRING_TYPE;
+                // 确定参数类型
+                for (InnerClass innerClass : topLevelClass.getInnerClasses()) {
+                    if (FullyQualifiedJavaType.getGeneratedCriteriaInstance().equals(innerClass.getType())) {
+                        for (Method method : innerClass.getMethods()) {
+                            String FN = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1, fieldName.length());
+                            if (method.getName().equals("and" + FN + "EqualTo")) {
+                                Parameter parm = method.getParameters().get(0);
+                                ptype = parm.getType();
+                            }
+                        }
+                    }
+                }
                 String[] expression = new String[12];
                 expression[0] = "if (" + fieldName + " != null ) {";
                 expression[1] = "long nan = 0;";
                 expression[2] = "StringBuilder sb = new StringBuilder(\"0\");";
-                expression[3] = "for (char c : " + fieldName + ".toCharArray()) {";
+                expression[3] = "for (char c : String.valueOf(" + fieldName + ").toCharArray()) {";
                 expression[4] = "if (Character.isDigit(c)) sb.append(c);";
                 expression[5] = "else nan += c;";
                 expression[6] = "}";
@@ -63,12 +75,11 @@ public class SliceTablePlugin extends PluginAdapter {
                 expression[9] = "this." + SUFFIX_FIELD + " = (Math.abs(lid) % " + modValue + ") + \"\";";
                 expression[10] = "}";
                 expression[11] = "return this;";
-                Method method = makePartitionMethod(STRING_TYPE, topLevelClass.getType(), fieldName, tableName, expression);
+                Method method = makePartitionMethod(ptype, topLevelClass.getType(), fieldName, tableName, expression);
                 topLevelClass.addMethod(method);
-                log.debug("{} add method {}.", topLevelClass.getType().getShortName(), method.getName());
-                addSuffixProperty(topLevelClass, tableName);
+                System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
+                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
             } else if (month != null && !"".equals(month)) {
-                String fieldName = convertColumnName(relColumn, introspectedTable.getTableConfiguration());
                 String[] expression = new String[7];
                 expression[0] = "if (" + fieldName + " != null ) {";
                 expression[1] = "Calendar calendar = Calendar.getInstance();";
@@ -80,8 +91,8 @@ public class SliceTablePlugin extends PluginAdapter {
                 Method method = makePartitionMethod(DATE_TYPE, topLevelClass.getType(), fieldName, tableName, expression);
                 topLevelClass.addImportedType(CALENDAR_TYPE);
                 topLevelClass.addMethod(method);
-                log.debug("{} add method {}.", topLevelClass.getType().getShortName(), method.getName());
-                addSuffixProperty(topLevelClass, tableName);
+                System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
+                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
             }
         }
         return true;
@@ -106,7 +117,7 @@ public class SliceTablePlugin extends PluginAdapter {
                     expression[0] = "if (this." + field + " != null ) {";
                     expression[1] = "long nan = 0;";
                     expression[2] = "StringBuilder sb = new StringBuilder(\"0\");";
-                    expression[3] = "for (char c : " + field + ".toCharArray()) {";
+                    expression[3] = "for (char c : String.valueOf(" + field + ").toCharArray()) {";
                     expression[4] = "if (Character.isDigit(c)) sb.append(c);";
                     expression[5] = "else nan += c;";
                     expression[6] = "}";
@@ -115,8 +126,8 @@ public class SliceTablePlugin extends PluginAdapter {
                     expression[9] = "this." + SUFFIX_FIELD + " = (Math.abs(lid) % " + modValue + ") + \"\";";
                     expression[10] = "}";
                     method.addBodyLines(Arrays.asList(expression));
-                    log.debug("{} modify method {} for update field {}", topLevelClass.getType().getShortName(), method.getName(), SUFFIX_FIELD);
-                    addSuffixProperty(topLevelClass, tableName);
+                    System.out.println("-----------------" + topLevelClass.getType().getShortName() + " modify method " + method.getName() + " for update field " + SUFFIX_FIELD);
+                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
                 } else if (month != null && !"".equals(month)) {
                     int mc = Integer.parseInt(month);
                     if (mc < 1 || mc > 12) {
@@ -132,8 +143,8 @@ public class SliceTablePlugin extends PluginAdapter {
                     expression[5] = "}";
                     method.addBodyLines(Arrays.asList(expression));
                     topLevelClass.addImportedType(CALENDAR_TYPE);
-                    log.debug("{} modify method {} for update field {}", topLevelClass.getType().getShortName(), method.getName(), SUFFIX_FIELD);
-                    addSuffixProperty(topLevelClass, tableName);
+                    System.out.println("-----------------" + topLevelClass.getType().getShortName() + " modify method " + method.getName() + " for update field " + SUFFIX_FIELD);
+                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
                 }
             }
         }
@@ -152,57 +163,26 @@ public class SliceTablePlugin extends PluginAdapter {
 
     @Override
     public boolean sqlMapSelectByPrimaryKeyElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
-        log.debug("{} replace parameter type to {} of SelectByPrimaryKey in sql xml", introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime(), introspectedTable.getBaseRecordType());
+        System.out.println("-----------------" + introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime() + " replace parameter type to " + introspectedTable.getBaseRecordType() + " of SelectByPrimaryKey in sql xml");
         return this.replaceParamType(element, introspectedTable);
     }
 
     @Override
     public boolean sqlMapDeleteByPrimaryKeyElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
-        log.debug("{} replace parameter type to {} of DeleteByPrimaryKey in sql xml", introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime(), introspectedTable.getBaseRecordType());
+        System.out.println("-----------------" + introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime() + " replace parameter type to " + introspectedTable.getBaseRecordType() + " of DeleteByPrimaryKey in sql xml");
         return this.replaceParamType(element, introspectedTable);
     }
 
     @Override
     public boolean clientSelectByPrimaryKeyMethodGenerated(Method method, Interface interfaze, IntrospectedTable introspectedTable) {
-        log.debug("{} replace parameter type to {} of SelectByPrimaryKey in client class' method {}", interfaze.getType().getShortName(), introspectedTable.getBaseRecordType(), method.getName());
+        System.out.println("-----------------" + interfaze.getType().getShortName() + " replace parameter type to " + introspectedTable.getBaseRecordType() + " of SelectByPrimaryKey in client class' method " + method.getName());
         return this.replaceParamType(method, introspectedTable);
     }
 
     @Override
     public boolean clientDeleteByPrimaryKeyMethodGenerated(Method method, Interface interfaze, IntrospectedTable introspectedTable) {
-        log.debug("{} replace parameter type to {} of DeleteByPrimaryKey in client class' method {}", interfaze.getType().getShortName(), introspectedTable.getBaseRecordType(), method.getName());
+        System.out.println("-----------------" + interfaze.getType().getShortName() + " replace parameter type to " + introspectedTable.getBaseRecordType() + " of DeleteByPrimaryKey in client class' method " + method.getName());
         return this.replaceParamType(method, introspectedTable);
-    }
-
-    private void addSuffixProperty(TopLevelClass topLevelClass, String tableName) {
-        for (Method method : topLevelClass.getMethods()) {
-            if (method.getName().equals("clear")) {
-                method.addBodyLine("this." + SUFFIX_FIELD + " = null;");
-            }
-        }
-        topLevelClass.addField(this.makeStringField(SUFFIX_FIELD, tableName));
-        topLevelClass.addMethod(this.makeGetterStringMethod(SUFFIX_FIELD, tableName));
-        log.debug("{} add field {} and getter related.", topLevelClass.getType().getShortName(), SUFFIX_FIELD);
-    }
-
-    private Field makeStringField(String fieldName, String tableName) {
-        Field field = new Field();
-        field.setName(fieldName);
-        field.setVisibility(JavaVisibility.PRIVATE);
-        field.setType(FullyQualifiedJavaType.getStringInstance());
-        this.addDoc(field, tableName);
-        return field;
-    }
-
-    private Method makeGetterStringMethod(String fieldName, String tableName) {
-        String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1, fieldName.length());
-        Method method = new Method();
-        method.setName(methodName);
-        method.setVisibility(JavaVisibility.PUBLIC);
-        method.setReturnType(FullyQualifiedJavaType.getStringInstance());
-        method.addBodyLine("return this." + fieldName + ";");
-        this.addDoc(method, tableName);
-        return method;
     }
 
     private Method makePartitionMethod(FullyQualifiedJavaType paramType, FullyQualifiedJavaType returnType, String fieldName, String tableName, String[] exp) {
@@ -213,21 +193,8 @@ public class SliceTablePlugin extends PluginAdapter {
         method.setReturnType(returnType);
         method.addBodyLines(Arrays.asList(exp));
         method.addParameter(new Parameter(paramType, fieldName));
-        this.addDoc(method, tableName);
+        PluginUtils.addDoc(this.getContext(), method, tableName);
         return method;
-    }
-
-    private void addDoc(JavaElement element, String tableName) {
-        String suppressAllComments = this.getContext().getCommentGeneratorConfiguration().getProperty("suppressAllComments");
-        if (!"true".equals(suppressAllComments)) {
-            String type = element.getClass() == Field.class ? "field" : "method";
-            element.addJavaDocLine("/**");
-            element.addJavaDocLine("* This " + type + " was generated by MyBatis Generator.");
-            element.addJavaDocLine("* This " + type + " corresponds to the database table " + tableName);
-            element.addJavaDocLine("*");
-            element.addJavaDocLine("* @mbggenerated " + df.format(new Date()));
-            element.addJavaDocLine("*/");
-        }
     }
 
     private boolean needPartition(IntrospectedTable introspectedTable) {
@@ -271,9 +238,9 @@ public class SliceTablePlugin extends PluginAdapter {
                     field.setAccessible(true);
                     field.set(parameter, new FullyQualifiedJavaType(classType));
                 } catch (NoSuchFieldException e) {
-                    log.error("replace parameter type error", e);
+                    System.err.println("replace parameter type error" + e);
                 } catch (IllegalAccessException e) {
-                    log.error("replace parameter type error", e);
+                    System.err.println("replace parameter type error" + e);
                 }
             }
         }
@@ -290,9 +257,9 @@ public class SliceTablePlugin extends PluginAdapter {
                         field.setAccessible(true);
                         field.set(attribute, classType);
                     } catch (NoSuchFieldException e) {
-                        log.error("replace parameter type error", e);
+                        System.err.println("replace parameter type error" + e);
                     } catch (IllegalAccessException e) {
-                        log.error("replace parameter type error", e);
+                        System.err.println("replace parameter type error" + e);
                     }
                 }
             }
@@ -317,11 +284,11 @@ public class SliceTablePlugin extends PluginAdapter {
                 field.setAccessible(true);
                 field.set(sqlhead, "update " + sfx);
 
-                log.debug("generate dynamic table name base on {} in sql xml", baseName);
+                System.out.println("-----------------" + baseName + "generate dynamic table name base on {} in sql xml");
             } catch (NoSuchFieldException e) {
-                log.error("generate dynamic table name error", e);
+                System.err.println("generate dynamic table name error" + e);
             } catch (IllegalAccessException e) {
-                log.error("generate dynamic table name error", e);
+                System.err.println("generate dynamic table name error" + e);
             }
         }
         return true;
@@ -335,10 +302,7 @@ public class SliceTablePlugin extends PluginAdapter {
         return true;
     }
 
-    private Logger log = LoggerFactory.getLogger(SliceTablePlugin.class);
-
-    private final SimpleDateFormat df = new SimpleDateFormat("EEE MMM ww HH:mm:ss z yyyy", Locale.US);
-
+    private final static String TOUCH_METHODS = "touchMethods";
     private final static String REL_COLUMN = "sliceColumn";
     private final static String MOD_VALUE = "sliceMod";
     private final static String TIME_VALUE = "sliceMonth";

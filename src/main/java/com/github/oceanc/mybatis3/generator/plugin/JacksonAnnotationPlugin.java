@@ -6,8 +6,6 @@ import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -28,14 +26,14 @@ public class JacksonAnnotationPlugin extends PluginAdapter {
             String ann = "@JsonProperty(\"" + prop + "\")";
             field.addAnnotation(ann);
             topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonProperty"));
-            log.debug("{} add field annotation {} to {} implement by Jackson2.", topLevelClass.getType().getShortName(), ann, field.getName());
+            System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add field annotation " + ann + " to " + field.getName() + " implement by Jackson2.");
         }
         String format = annotateFormat(introspectedColumn, introspectedTable);
         if (format != null) {
             String ann ="@JsonFormat(pattern = \"" + format + "\")";
             field.addAnnotation(ann);
             topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonFormat"));
-            log.debug("{} add field annotation {} to {} implement by Jackson2.", topLevelClass.getType().getShortName(), ann, field.getName());
+            System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add field annotation " + ann + " to " + field.getName() + " implement by Jackson2.");
         }
         annotateIgnore(field, topLevelClass, introspectedColumn, introspectedTable);
         return true;
@@ -78,13 +76,11 @@ public class JacksonAnnotationPlugin extends PluginAdapter {
                 if (column.trim().equals(introspectedColumn.getActualColumnName())) {
                     field.addAnnotation("@JsonIgnore");
                     topLevelClass.addImportedType(new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonIgnore"));
-                    log.debug("{} add field annotation @JsonIgnore to {} implement by Jackson2.", topLevelClass.getType().getShortName(), field.getName());
+                    System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add field annotation @JsonIgnore to " + field.getName() + " implement by Jackson2.");
                 }
             }
         }
     }
-
-    private Logger log = LoggerFactory.getLogger(JacksonAnnotationPlugin.class);
 
     private static final String DELIMITER = ",";
     private static final String DELIMITER_FORMAT = "@";

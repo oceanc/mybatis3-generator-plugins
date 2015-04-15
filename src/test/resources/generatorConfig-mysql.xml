@@ -12,6 +12,7 @@
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.JacksonToJsonPlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.UpdateSqlTextOfUpdateSelectivePlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.WhereSqlTextPlugin"/>
+        <plugin type="com.github.oceanc.mybatis3.generator.plugin.SumSelectivePlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.LombokAnnotationPlugin"/>
         <!--去除注释-->
         <commentGenerator type="DEFAULT">
@@ -19,12 +20,12 @@
         </commentGenerator>
         <!--数据库连接-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/point"
-                        userId="test"
-                        password="test">
+                        connectionURL="jdbc:mysql://localhost:3306/test"
+                        userId=""
+                        password="">
         </jdbcConnection>
         <!--生成实体类 指定包名-->
-        <javaModelGenerator targetPackage="com.github.oceanc.mybatis3.generator.plugin.test.model"
+        <javaModelGenerator targetPackage="com.github.oceanc.mybatis3.generator.plugin.model"
                             targetProject="src/test/java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="true"/>
@@ -34,7 +35,7 @@
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
         <!--生成Dao文件 type属性和父节点的属性targetRuntime="MyBatis3"对应-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.github.oceanc.mybatis3.generator.plugin.test.mapper"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.github.oceanc.mybatis3.generator.plugin.mapper"
                              targetProject="src/test/java">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
@@ -42,19 +43,22 @@
         <table tableName="TABLE_TEST_SLICE_MOD" domainObjectName="TableTestSliceMod">
             <property name="sliceMod" value="83"/>
             <property name="sliceColumn" value="SLICE_MOD_ID"/>
+            <property name="jacksonColumns" value="JACKSON_ID1,JACKSON_ID2"/>
+            <property name="jacksonProperties" value="jacksonProperty1,jacksonProperty2"/>
+            <property name="jacksonFormats" value="JACKSON_TIME@yyyy-MM-dd HH:mm:ss"/>
+            <property name="whereSql" value="true"/>
+            <property name="updateSql" value="true"/>
             <generatedKey column="ID" sqlStatement="MySql" identity="true" />
-            <columnOverride column="INT_VARCHAR_COL" javaType="java.lang.String" jdbcType="VARCHAR"/>
         </table>
         <table tableName="TABLE_TEST_SLICE_MONTH" domainObjectName="TableTestSliceMonth">
             <property name="sliceMonth" value="1"/>
             <property name="sliceColumn" value="SLICE_MONTH_ID"/>
-            <generatedKey column="ID" sqlStatement="MySql" identity="true" />
-        </table>
-        <table tableName="TABLE_TEST_JACKSON" domainObjectName="TableTestJackson">
             <property name="jacksonColumns" value="JACKSON_ID1,JACKSON_ID2"/>
             <property name="jacksonProperties" value="jacksonProperty1,jacksonProperty2"/>
             <property name="jacksonFormats" value="JACKSON_TIME@yyyy-MM-dd HH:mm:ss"/>
-            <generatedKey column="ACCOUNT_ORDER_NO" sqlStatement="MySql" identity="true"/>
+            <property name="whereSql" value="true"/>
+            <property name="updateSql" value="true"/>
+            <generatedKey column="ID" sqlStatement="MySql" identity="true" />
         </table>
     </context>
 </generatorConfiguration>

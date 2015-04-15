@@ -1,4 +1,4 @@
-package com.gihub.oceanc.mybatis3.generator.plugin;
+package com.github.oceanc.mybatis3.generator.plugin;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.api.ProgressCallback;
@@ -19,9 +19,9 @@ public class Generator {
     public static void main(String[] args) {
         String path = Generator.class.getClassLoader().getResource("").getPath();
         String root = path.split("target")[0];
-        String projectPath = root + "src/main/java";
-        String modelPackage = "com.github.oceanc.mybatis3.mysql.model";
-        String mapperPackage = "com.github.oceanc.mybatis3.mysql.mapper";
+        String projectPath = root + "src/test/java";
+        String modelPackage = "com.github.oceanc.mybatis3.generator.plugin.model";
+        String mapperPackage = "com.github.oceanc.mybatis3.generator.plugin.mapper";
         String xmlProjectPath = root + "src/test/resources";
         String xmlPackage = "mapping";
 

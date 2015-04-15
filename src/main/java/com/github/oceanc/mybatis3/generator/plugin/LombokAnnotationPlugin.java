@@ -5,8 +5,6 @@ import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +28,11 @@ public class LombokAnnotationPlugin extends PluginAdapter {
         for (Method method : methods) {
             if (method.getBodyLines().size() < 2) {
                 remove.add(method);
-                log.debug("{}'s method={} removed cause lombok annotation.", topLevelClass.getType().getShortName(), method.getName());
+                System.out.println("-----------------" + topLevelClass.getType().getShortName() + "'s method=" + method.getName() + " removed cause lombok annotation.");
             }
         }
         methods.removeAll(remove);
         return true;
     }
-
-    private Logger log = LoggerFactory.getLogger(LombokAnnotationPlugin.class);
 
 }
