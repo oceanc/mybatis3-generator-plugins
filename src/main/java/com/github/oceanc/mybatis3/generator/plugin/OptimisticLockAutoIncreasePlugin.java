@@ -66,7 +66,7 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
                     TextElement sets = (TextElement) node;
                     String[] fields = sets.getContent().split(",");
                     for (int j = 0; j < fields.length; j++) {
-                        if (column.equals(fields[j].trim())) {
+                        if (column.equals(fields[j].trim()) || fields[j].trim().equals(column + ")")) {
                             fieldIndex = j;
                             nodeIndex = i;
                             break;
@@ -76,7 +76,8 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
             }
             int index = middle + nodeIndex;
             TextElement values = (TextElement)elements.get(index);
-            boolean needComma = values.getContent().trim().lastIndexOf(",") == values.getContent().trim().length() -1 ;
+            boolean needComma = values.getContent().trim().lastIndexOf(",") == values.getContent().trim().length() - 1;
+            boolean needRightBracket = values.getContent().trim().lastIndexOf(")") == values.getContent().trim().length() - 1;
             String[] temp = values.getContent().trim().split(",");
             String[] vs = new String[temp.length / 2];
             for (int i = 0; i < temp.length; i+=2) {
@@ -92,6 +93,9 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
             }
             if (needComma) {
                 sb.append(", ");
+            }
+            if (needRightBracket) {
+                sb.append(")");
             }
             elements.remove(index);
             elements.add(index, new TextElement(sb.toString()));
