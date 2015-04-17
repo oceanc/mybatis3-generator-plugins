@@ -13,6 +13,7 @@
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.UpdateSqlTextOfUpdateSelectivePlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.WhereSqlTextPlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.SumSelectivePlugin"/>
+        <plugin type="com.github.oceanc.mybatis3.generator.plugin.OptimisticLockAutoIncreasePlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.LombokAnnotationPlugin"/>
         <!--去除注释-->
         <commentGenerator type="DEFAULT">
@@ -48,6 +49,7 @@
             <property name="jacksonFormats" value="JACKSON_TIME@yyyy-MM-dd HH:mm:ss"/>
             <property name="whereSql" value="true"/>
             <property name="updateSql" value="true"/>
+            <property name="optimisticLockColumn" value="VERSION"/>
             <generatedKey column="ID" sqlStatement="MySql" identity="true" />
         </table>
         <table tableName="TABLE_TEST_SLICE_MONTH" domainObjectName="TableTestSliceMonth">
@@ -58,6 +60,7 @@
             <property name="jacksonFormats" value="JACKSON_TIME@yyyy-MM-dd HH:mm:ss"/>
             <property name="whereSql" value="true"/>
             <property name="updateSql" value="true"/>
+            <property name="optimisticLockColumn" value="VERSION"/>
             <generatedKey column="ID" sqlStatement="MySql" identity="true" />
         </table>
     </context>

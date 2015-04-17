@@ -28,6 +28,8 @@ public class TableTestSliceMod implements Serializable {
 
     private Integer couldSumCol;
 
+    private Long version;
+
     private static final long serialVersionUID = 1L;
 
     private String updateSql;

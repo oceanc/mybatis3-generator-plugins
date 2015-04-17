@@ -8,6 +8,7 @@
     <result column="JACKSON_ID2" property="jacksonId2" jdbcType="VARCHAR" />
     <result column="JACKSON_TIME" property="jacksonTime" jdbcType="TIMESTAMP" />
     <result column="COULD_SUM_COL" property="couldSumCol" jdbcType="INTEGER" />
+    <result column="VERSION" property="version" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    ID, SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
+    ID, SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL, VERSION
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" >
     select
@@ -105,9 +106,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into TABLE_TEST_SLICE_${tableNameSuffix} (SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, 
-      JACKSON_TIME, COULD_SUM_COL)
+      JACKSON_TIME, COULD_SUM_COL, VERSION
+      )
     values (#{sliceModId,jdbcType=BIGINT}, #{jacksonId1,jdbcType=BIGINT}, #{jacksonId2,jdbcType=VARCHAR}, 
-      #{jacksonTime,jdbcType=TIMESTAMP}, #{couldSumCol,jdbcType=INTEGER})
+    #{jacksonTimejdbcType=TIMESTAMP}, #{couldSumColjdbcType=INTEGER}, 0
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -130,6 +133,7 @@
       <if test="couldSumCol != null" >
         COULD_SUM_COL,
       </if>
+      VERSION,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="sliceModId != null" >
@@ -147,6 +151,7 @@
       <if test="couldSumCol != null" >
         #{couldSumCol,jdbcType=INTEGER},
       </if>
+      0,
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="java.lang.Integer" >
@@ -176,6 +181,7 @@
       <if test="record.couldSumCol != null" >
         COULD_SUM_COL = #{record.couldSumCol,jdbcType=INTEGER},
       </if>
+      VERSION = VERSION + 1,
       <if test="record.updateSql != null" >
         ${record.updateSql},
       </if>
@@ -191,7 +197,8 @@
       JACKSON_ID1 = #{record.jacksonId1,jdbcType=BIGINT},
       JACKSON_ID2 = #{record.jacksonId2,jdbcType=VARCHAR},
       JACKSON_TIME = #{record.jacksonTime,jdbcType=TIMESTAMP},
-      COULD_SUM_COL = #{record.couldSumCol,jdbcType=INTEGER}
+      COULD_SUM_COL = #{record.couldSumCol,jdbcType=INTEGER},
+      VERSION = VERSION + 1
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -214,6 +221,7 @@
       <if test="couldSumCol != null" >
         COULD_SUM_COL = #{couldSumCol,jdbcType=INTEGER},
       </if>
+      VERSION = VERSION + 1,
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
@@ -223,7 +231,8 @@
       JACKSON_ID1 = #{jacksonId1,jdbcType=BIGINT},
       JACKSON_ID2 = #{jacksonId2,jdbcType=VARCHAR},
       JACKSON_TIME = #{jacksonTime,jdbcType=TIMESTAMP},
-      COULD_SUM_COL = #{couldSumCol,jdbcType=INTEGER}
+      COULD_SUM_COL = #{couldSumCol,jdbcType=INTEGER},
+      VERSION = VERSION + 1
     where ID = #{id,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" id="selectByExampleWithRowbounds" >
@@ -240,7 +249,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="sumByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="java.lang.Long" >
+  <select id="sumByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="long" >
     select sum(${sumCol}) from TABLE_TEST_SLICE_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />

@@ -5,6 +5,7 @@
     <id column="ID" property="id" jdbcType="BIGINT" />
     <result column="SLICE_MONTH_ID" property="sliceMonthId" jdbcType="TIMESTAMP" />
     <result column="JACKSON_ID1" property="jacksonId1" jdbcType="BIGINT" />
+    <result column="VERSION" property="version" jdbcType="BIGINT" />
     <result column="JACKSON_ID2" property="jacksonId2" jdbcType="VARCHAR" />
     <result column="JACKSON_TIME" property="jacksonTime" jdbcType="TIMESTAMP" />
     <result column="COULD_SUM_COL" property="couldSumCol" jdbcType="INTEGER" />
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    ID, SLICE_MONTH_ID, JACKSON_ID1, JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
+    ID, SLICE_MONTH_ID, JACKSON_ID1, VERSION, JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMonthExample" >
     select
@@ -104,10 +105,12 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into TABLE_TEST_SLICE_${tableNameSuffix} (SLICE_MONTH_ID, JACKSON_ID1, JACKSON_ID2, 
-      JACKSON_TIME, COULD_SUM_COL)
-    values (#{sliceMonthId,jdbcType=TIMESTAMP}, #{jacksonId1,jdbcType=BIGINT}, #{jacksonId2,jdbcType=VARCHAR}, 
-      #{jacksonTime,jdbcType=TIMESTAMP}, #{couldSumCol,jdbcType=INTEGER})
+    insert into TABLE_TEST_SLICE_${tableNameSuffix} (SLICE_MONTH_ID, JACKSON_ID1, VERSION, 
+      JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
+      )
+    values (#{sliceMonthIdjdbcType=TIMESTAMP}, #{jacksonId1jdbcType=BIGINT}, 0, 
+      #{jacksonId2,jdbcType=VARCHAR}, #{jacksonTime,jdbcType=TIMESTAMP}, #{couldSumCol,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMonth" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -121,6 +124,7 @@
       <if test="jacksonId1 != null" >
         JACKSON_ID1,
       </if>
+      VERSION,
       <if test="jacksonId2 != null" >
         JACKSON_ID2,
       </if>
@@ -138,6 +142,7 @@
       <if test="jacksonId1 != null" >
         #{jacksonId1,jdbcType=BIGINT},
       </if>
+      0,
       <if test="jacksonId2 != null" >
         #{jacksonId2,jdbcType=VARCHAR},
       </if>
@@ -167,6 +172,7 @@
       <if test="record.jacksonId1 != null" >
         JACKSON_ID1 = #{record.jacksonId1,jdbcType=BIGINT},
       </if>
+      VERSION = VERSION + 1,
       <if test="record.jacksonId2 != null" >
         JACKSON_ID2 = #{record.jacksonId2,jdbcType=VARCHAR},
       </if>
@@ -189,6 +195,7 @@
     set ID = #{record.id,jdbcType=BIGINT},
       SLICE_MONTH_ID = #{record.sliceMonthId,jdbcType=TIMESTAMP},
       JACKSON_ID1 = #{record.jacksonId1,jdbcType=BIGINT},
+      VERSION = VERSION + 1,
       JACKSON_ID2 = #{record.jacksonId2,jdbcType=VARCHAR},
       JACKSON_TIME = #{record.jacksonTime,jdbcType=TIMESTAMP},
       COULD_SUM_COL = #{record.couldSumCol,jdbcType=INTEGER}
@@ -205,6 +212,7 @@
       <if test="jacksonId1 != null" >
         JACKSON_ID1 = #{jacksonId1,jdbcType=BIGINT},
       </if>
+      VERSION = VERSION + 1,
       <if test="jacksonId2 != null" >
         JACKSON_ID2 = #{jacksonId2,jdbcType=VARCHAR},
       </if>
@@ -221,6 +229,7 @@
     update TABLE_TEST_SLICE_${tableNameSuffix}
     set SLICE_MONTH_ID = #{sliceMonthId,jdbcType=TIMESTAMP},
       JACKSON_ID1 = #{jacksonId1,jdbcType=BIGINT},
+      VERSION = VERSION + 1,
       JACKSON_ID2 = #{jacksonId2,jdbcType=VARCHAR},
       JACKSON_TIME = #{jacksonTime,jdbcType=TIMESTAMP},
       COULD_SUM_COL = #{couldSumCol,jdbcType=INTEGER}
@@ -240,7 +249,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="sumByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMonthExample" resultType="java.lang.Long" >
+  <select id="sumByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMonthExample" resultType="long" >
     select sum(${sumCol}) from TABLE_TEST_SLICE_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />

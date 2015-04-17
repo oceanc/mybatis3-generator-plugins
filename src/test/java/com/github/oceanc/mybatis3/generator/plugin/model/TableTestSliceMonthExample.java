@@ -104,6 +104,11 @@ public class TableTestSliceMonthExample {
         return this;
     }
 
+    public TableTestSliceMonthExample sumVersion() {
+        this.sumCol="VERSION";
+        return this;
+    }
+
     public TableTestSliceMonthExample sumJacksonId2() {
         this.sumCol="JACKSON_ID2";
         return this;
@@ -337,6 +342,66 @@ public class TableTestSliceMonthExample {
 
         public Criteria andJacksonId1NotBetween(Long value1, Long value2) {
             addCriterion("JACKSON_ID1 not between", value1, value2, "jacksonId1");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionIsNull() {
+            addCriterion("VERSION is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionIsNotNull() {
+            addCriterion("VERSION is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionEqualTo(Long value) {
+            addCriterion("VERSION =", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionNotEqualTo(Long value) {
+            addCriterion("VERSION <>", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionGreaterThan(Long value) {
+            addCriterion("VERSION >", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionGreaterThanOrEqualTo(Long value) {
+            addCriterion("VERSION >=", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionLessThan(Long value) {
+            addCriterion("VERSION <", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionLessThanOrEqualTo(Long value) {
+            addCriterion("VERSION <=", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionIn(List<Long> values) {
+            addCriterion("VERSION in", values, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionNotIn(List<Long> values) {
+            addCriterion("VERSION not in", values, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionBetween(Long value1, Long value2) {
+            addCriterion("VERSION between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionNotBetween(Long value1, Long value2) {
+            addCriterion("VERSION not between", value1, value2, "version");
             return (Criteria) this;
         }
 

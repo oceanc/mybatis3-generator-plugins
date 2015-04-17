@@ -21,6 +21,8 @@ public class TableTestSliceMonth implements Serializable {
     @JsonProperty("jacksonProperty1")
     private Long jacksonId1;
 
+    private Long version;
+
     @JsonProperty("jacksonProperty2")
     private String jacksonId2;
 
