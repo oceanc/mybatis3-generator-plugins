@@ -24,24 +24,38 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
         String column = introspectedTable.getTableConfigurationProperty(OPTIMISTIC_LOCK_COLUMN);
         if (column != null && !"".equals(column)) {
             int index = -1;
-            XmlElement sets = (XmlElement) element.getElements().get(2);
-            XmlElement setVs = (XmlElement) element.getElements().get(3);
-            List<Element> fields = sets.getElements();
-            for (int i = 0; i < fields.size(); i++) {
-                List<Element> ctnts = ((XmlElement) fields.get(i)).getElements();
-                for (Element ctnt : ctnts) {
-                    TextElement tx = (TextElement)ctnt;
-                    if (tx.getContent().equals(column + ",")) {
-                        index = i;
-                        break;
+            XmlElement sets = null;
+            XmlElement setVs = null;
+            for (Element el : element.getElements()) {
+                if (el.getClass() == XmlElement.class) {
+                    XmlElement xl = (XmlElement) el;
+                    for (Attribute attr : xl.getAttributes()) {
+                        if (attr.getName().equals("prefix") && attr.getValue().equals("(")) {
+                            sets = xl;
+                        } else if (attr.getName().equals("prefix") && attr.getValue().equals("values (")) {
+                            setVs = xl;
+                        }
                     }
                 }
             }
-            if (index > -1) {
-                fields.remove(index);
-                fields.add(index, new TextElement(column + ","));
-                setVs.getElements().remove(index);
-                setVs.getElements().add(index, new TextElement(("0,")));
+            if(sets != null && setVs != null) {
+                List<Element> fields = sets.getElements();
+                for (int i = 0; i < fields.size(); i++) {
+                    List<Element> ctnts = ((XmlElement) fields.get(i)).getElements();
+                    for (Element ctnt : ctnts) {
+                        TextElement tx = (TextElement)ctnt;
+                        if (tx.getContent().equals(column + ",")) {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                if (index > -1) {
+                    fields.remove(index);
+                    fields.add(index, new TextElement(column + ","));
+                    setVs.getElements().remove(index);
+                    setVs.getElements().add(index, new TextElement(("0,")));
+                }
             }
         }
 
@@ -55,9 +69,16 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
             int nodeIndex = -1;
             int fieldIndex = -1;
             List<Element> elements = element.getElements();
-            int middle = (elements.size() - 1) / 2;
+            int start = 0;
+            for (int i = 0; i < elements.size(); i++) {
+                if (elements.get(i).getClass() == TextElement.class) {
+                    start = i;
+                    break;
+                }
+            }
+            int middle = (elements.size() - start) / 2;
 
-            for (int i = 1; i <= middle; i++) {
+            for (int i = start; i <= middle; i++) {
                 if(fieldIndex > -1) {
                     break;
                 }
