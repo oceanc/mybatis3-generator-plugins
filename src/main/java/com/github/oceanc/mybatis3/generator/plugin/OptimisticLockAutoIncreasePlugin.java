@@ -2,11 +2,11 @@ package com.github.oceanc.mybatis3.generator.plugin;
 
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
-import org.mybatis.generator.api.dom.java.TopLevelClass;
-import org.mybatis.generator.api.dom.xml.*;
+import org.mybatis.generator.api.dom.xml.Attribute;
+import org.mybatis.generator.api.dom.xml.Element;
+import org.mybatis.generator.api.dom.xml.TextElement;
+import org.mybatis.generator.api.dom.xml.XmlElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -99,10 +99,10 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
             TextElement values = (TextElement)elements.get(index);
             boolean needComma = values.getContent().trim().lastIndexOf(",") == values.getContent().trim().length() - 1;
             boolean needRightBracket = values.getContent().trim().lastIndexOf(")") == values.getContent().trim().length() - 1;
-            String[] temp = values.getContent().trim().split(",");
+             String[] temp = values.getContent().trim().split(",");
             String[] vs = new String[temp.length / 2];
             for (int i = 0; i < temp.length; i+=2) {
-                vs[i / 2] = temp[i] + temp[i + 1];
+                vs[i / 2] = temp[i] + "," + temp[i + 1];
             }
             vs[fieldIndex] = "0";
             StringBuilder sb = new StringBuilder();
@@ -176,9 +176,9 @@ public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
                     XmlElement fieldXml = (XmlElement) fields.get(i);
 
                     List<Element> elements = fieldXml.getElements();
-                    for (int j = 0; j < elements.size(); j++) {
-                        if (elements.get(j).getClass() == TextElement.class) {
-                            TextElement oldSql = (TextElement) elements.get(j);
+                    for (Element element1 : elements) {
+                        if (element1.getClass() == TextElement.class) {
+                            TextElement oldSql = (TextElement) element1;
                             if (oldSql.getContent().contains(column + " = ")) {
                                 index = i;
                                 String comma = oldSql.getContent().lastIndexOf(",") == oldSql.getContent().length() - 1 ? "," : "";

@@ -6,10 +6,7 @@ import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chengyang
@@ -70,6 +67,5 @@ public class UpdateSqlTextOfUpdateSelectivePlugin extends PluginAdapter {
         return true;
     }
 
-    private final SimpleDateFormat df = new SimpleDateFormat("EEE MMM ww HH:mm:ss z yyyy", Locale.US);
     private final static String UPDATE_SQL = "updateSql";
 }

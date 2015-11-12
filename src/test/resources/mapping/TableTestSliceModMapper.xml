@@ -109,7 +109,7 @@
       JACKSON_TIME, COULD_SUM_COL, VERSION
       )
     values (#{sliceModId,jdbcType=BIGINT}, #{jacksonId1,jdbcType=BIGINT}, #{jacksonId2,jdbcType=VARCHAR}, 
-    #{jacksonTimejdbcType=TIMESTAMP}, #{couldSumColjdbcType=INTEGER}, 0
+    #{jacksonTime,jdbcType=TIMESTAMP}, #{couldSumCol,jdbcType=INTEGER}, 0
       )
   </insert>
   <insert id="insertSelective" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
@@ -255,4 +255,13 @@
       <include refid="Example_Where_Clause" />
     </if>
 </select>
+   <insert id="batchInsert">
+    insert into TABLE_TEST_SLICE_${tableNameSuffix} ( <include refid="Base_Column_List"/> )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.sliceModId,jdbcType=BIGINT}, #{item.jacksonId1,jdbcType=BIGINT}, #{item.jacksonId2,jdbcType=VARCHAR}, 
+      #{item.jacksonTime,jdbcType=TIMESTAMP}, #{item.couldSumCol,jdbcType=INTEGER}, 0
+        )
+    </foreach>
+  </insert>
 </mapper>

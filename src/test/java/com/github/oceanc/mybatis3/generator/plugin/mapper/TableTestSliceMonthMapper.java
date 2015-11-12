@@ -32,4 +32,6 @@ public interface TableTestSliceMonthMapper {
     int updateByPrimaryKey(TableTestSliceMonth record);
 
     Long sumByExample(TableTestSliceMonthExample example);
+
+    void batchInsert(List<TableTestSliceMonth> items);
 }

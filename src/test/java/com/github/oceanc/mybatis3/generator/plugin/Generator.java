@@ -17,17 +17,17 @@ import java.util.List;
 public class Generator {
 
     public static void main(String[] args) {
-        String path = Generator.class.getClassLoader().getResource("").getPath();
-        String root = path.split("target")[0];
-        String projectPath = root + "src/test/java";
+
+        String root = System.getProperty("user.dir");
+        String projectPath = root + "/src/test/java";
         String modelPackage = "com.github.oceanc.mybatis3.generator.plugin.model";
         String mapperPackage = "com.github.oceanc.mybatis3.generator.plugin.mapper";
-        String xmlProjectPath = root + "src/test/resources";
+        String xmlProjectPath = root + "/src/test/resources";
         String xmlPackage = "mapping";
 
         try {
             List<String> warnings = new ArrayList<String>();
-            File configFile = new File(path + "generatorConfig-mysql.xml");
+            File configFile = new File(xmlProjectPath + "/generatorConfig-mysql.xml");
             ConfigurationParser cp = new ConfigurationParser(warnings);
             Configuration config = cp.parseConfiguration(configFile);
 

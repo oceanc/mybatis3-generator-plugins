@@ -9,11 +9,8 @@ import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.TableConfiguration;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chengyang
@@ -217,7 +214,7 @@ public class SliceTablePlugin extends PluginAdapter {
     private static String camelcase(String[] words) {
         StringBuilder sb = new StringBuilder(words[0].toLowerCase());
         for (int i = 1; i < words.length; i++) {
-            sb.append(words[i].substring(0, 1));
+            sb.append(words[i].substring(0, 1).toUpperCase());
             if (words[i].length() > 1) {
                 sb.append(words[i].substring(1, words[i].length()).toLowerCase());
             }
@@ -302,7 +299,6 @@ public class SliceTablePlugin extends PluginAdapter {
         return true;
     }
 
-    private final static String TOUCH_METHODS = "touchMethods";
     private final static String REL_COLUMN = "sliceColumn";
     private final static String MOD_VALUE = "sliceMod";
     private final static String TIME_VALUE = "sliceMonth";

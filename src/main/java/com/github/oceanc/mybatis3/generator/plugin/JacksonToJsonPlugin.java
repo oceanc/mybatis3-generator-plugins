@@ -2,12 +2,12 @@ package com.github.oceanc.mybatis3.generator.plugin;
 
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
-import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.JavaVisibility;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chengyang
@@ -40,7 +40,5 @@ public class JacksonToJsonPlugin extends PluginAdapter {
         System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method=toJson implement by Jackson2.");
         return true;
     }
-
-    private final SimpleDateFormat df = new SimpleDateFormat("EEE MMM ww HH:mm:ss z yyyy", Locale.US);
 
 }

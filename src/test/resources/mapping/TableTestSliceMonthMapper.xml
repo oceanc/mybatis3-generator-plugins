@@ -108,7 +108,7 @@
     insert into TABLE_TEST_SLICE_${tableNameSuffix} (SLICE_MONTH_ID, JACKSON_ID1, VERSION, 
       JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
       )
-    values (#{sliceMonthIdjdbcType=TIMESTAMP}, #{jacksonId1jdbcType=BIGINT}, 0, 
+    values (#{sliceMonthId,jdbcType=TIMESTAMP}, #{jacksonId1,jdbcType=BIGINT}, 0, 
       #{jacksonId2,jdbcType=VARCHAR}, #{jacksonTime,jdbcType=TIMESTAMP}, #{couldSumCol,jdbcType=INTEGER}
       )
   </insert>
@@ -255,4 +255,13 @@
       <include refid="Example_Where_Clause" />
     </if>
 </select>
+   <insert id="batchInsert">
+    insert into TABLE_TEST_SLICE_${tableNameSuffix} ( <include refid="Base_Column_List"/> )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.sliceMonthId,jdbcType=TIMESTAMP}, #{item.jacksonId1,jdbcType=BIGINT}, 0, 
+        #{item.jacksonId2,jdbcType=VARCHAR}, #{item.jacksonTime,jdbcType=TIMESTAMP}, #{item.couldSumCol,jdbcType=INTEGER}
+        )
+    </foreach>
+  </insert>
 </mapper>

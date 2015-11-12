@@ -8,10 +8,7 @@ import org.mybatis.generator.api.dom.xml.Document;
 import org.mybatis.generator.api.dom.xml.TextElement;
 
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by chengyang
@@ -71,7 +68,6 @@ public class SumSelectivePlugin extends PluginAdapter {
     private final static String SUM_COL_FIELD = "sumCol";
     private final static FullyQualifiedJavaType LONG_TYPE = new FullyQualifiedJavaType("java.lang.Long");
 
-    private final SimpleDateFormat df = new SimpleDateFormat("EEE MMM ww HH:mm:ss z yyyy", Locale.US);
     private static final String template = "" +
             "<select id=\"sumByExample\" parameterType=\"{0}\" resultType=\"long\" >\n" +
             "    select sum('${'" + SUM_COL_FIELD + "'}') from {1}\n" +

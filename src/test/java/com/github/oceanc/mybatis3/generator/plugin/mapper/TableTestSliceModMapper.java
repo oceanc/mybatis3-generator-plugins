@@ -32,4 +32,6 @@ public interface TableTestSliceModMapper {
     int updateByPrimaryKey(TableTestSliceMod record);
 
     Long sumByExample(TableTestSliceModExample example);
+
+    void batchInsert(List<TableTestSliceMod> items);
 }
