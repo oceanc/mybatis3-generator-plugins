@@ -85,8 +85,16 @@ public class TableTestSliceMonthExample {
         return this.tableNameSuffix;
     }
 
+    public void setTableNameSuffix(String tableNameSuffix) {
+        this.tableNameSuffix = tableNameSuffix;
+    }
+
     public String getSumCol() {
         return this.sumCol;
+    }
+
+    public void setSumCol(String sumCol) {
+        this.sumCol = sumCol;
     }
 
     public TableTestSliceMonthExample sumId() {

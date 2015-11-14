@@ -38,8 +38,8 @@ public class SliceTablePlugin extends PluginAdapter {
 
     @Override
     public boolean modelExampleClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
         if (needPartition(introspectedTable)) {
-            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
             String relColumn = introspectedTable.getTableConfigurationProperty(REL_COLUMN);
             String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
             String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
@@ -75,7 +75,7 @@ public class SliceTablePlugin extends PluginAdapter {
                 Method method = makePartitionMethod(ptype, topLevelClass.getType(), fieldName, tableName, expression);
                 topLevelClass.addMethod(method);
                 System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
-                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+//                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
             } else if (month != null && !"".equals(month)) {
                 String[] expression = new String[7];
                 expression[0] = "if (" + fieldName + " != null ) {";
@@ -89,16 +89,30 @@ public class SliceTablePlugin extends PluginAdapter {
                 topLevelClass.addImportedType(CALENDAR_TYPE);
                 topLevelClass.addMethod(method);
                 System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
-                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+//                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
             }
         }
+        PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+        return true;
+    }
+
+    @Override
+    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+        PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+        return true;
+    }
+
+    @Override
+    public boolean modelRecordWithBLOBsClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+        PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
         return true;
     }
 
     @Override
     public boolean modelSetterMethodGenerated(Method method, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
         if (needPartition(introspectedTable)) {
-            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
             String relColumn = introspectedTable.getTableConfigurationProperty(REL_COLUMN);
 
             if (introspectedColumn.getActualColumnName().equals(relColumn)) {
@@ -108,7 +122,7 @@ public class SliceTablePlugin extends PluginAdapter {
                 if (modValue != null && !"".equals(modValue)) {
                     if (!isPrime(Long.parseLong(modValue))) {
                         System.err.printf("modValue should be a prime number!!!!!!");
-                        throw new IllegalArgumentException("modValue not a prime number!!!!!!");
+                        //throw new IllegalArgumentException("modValue not a prime number!!!!!!");
                     }
                     String[] expression = new String[11];
                     expression[0] = "if (this." + field + " != null ) {";
@@ -124,7 +138,7 @@ public class SliceTablePlugin extends PluginAdapter {
                     expression[10] = "}";
                     method.addBodyLines(Arrays.asList(expression));
                     System.out.println("-----------------" + topLevelClass.getType().getShortName() + " modify method " + method.getName() + " for update field " + SUFFIX_FIELD);
-                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+//                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
                 } else if (month != null && !"".equals(month)) {
                     int mc = Integer.parseInt(month);
                     if (mc < 1 || mc > 12) {
@@ -141,7 +155,8 @@ public class SliceTablePlugin extends PluginAdapter {
                     method.addBodyLines(Arrays.asList(expression));
                     topLevelClass.addImportedType(CALENDAR_TYPE);
                     System.out.println("-----------------" + topLevelClass.getType().getShortName() + " modify method " + method.getName() + " for update field " + SUFFIX_FIELD);
-                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+//                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+
                 }
             }
         }

@@ -20,6 +20,7 @@ public abstract class PluginUtils {
         }
         topLevelClass.addField(makeStringField(context, field, tableName));
         topLevelClass.addMethod(makeGetterStringMethod(context, field, tableName));
+        topLevelClass.addMethod(makeSetterStringMethod(context, field, tableName));
         System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add field " + field + " and getter related.");
     }
 
@@ -39,6 +40,17 @@ public abstract class PluginUtils {
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setReturnType(FullyQualifiedJavaType.getStringInstance());
         method.addBodyLine("return this." + fieldName + ";");
+        addDoc(context, method, tableName);
+        return method;
+    }
+
+    public static Method makeSetterStringMethod(Context context, String fieldName, String tableName) {
+        String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1, fieldName.length());
+        Method method = new Method();
+        method.setName(methodName);
+        method.setVisibility(JavaVisibility.PUBLIC);
+        method.addParameter(new Parameter(FullyQualifiedJavaType.getStringInstance(), fieldName));
+        method.addBodyLine("this." + fieldName + " = " + fieldName + ";");
         addDoc(context, method, tableName);
         return method;
     }
