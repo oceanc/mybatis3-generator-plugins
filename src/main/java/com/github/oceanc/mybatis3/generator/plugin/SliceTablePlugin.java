@@ -24,16 +24,14 @@ public class SliceTablePlugin extends PluginAdapter {
 
     @Override
     public void initialized(IntrospectedTable introspectedTable) {
-        if (needPartition(introspectedTable)) {
-            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-            String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
-            String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
-            if ((modValue != null && !"".equals(modValue)) || (month != null && !"".equals(month))) {
-                String baseName = tableName.substring(0, tableName.lastIndexOf(UNDERLINE));
-                introspectedTable.setSqlMapAliasedFullyQualifiedRuntimeTableName(baseName + SUFFIX);
-                introspectedTable.setSqlMapFullyQualifiedRuntimeTableName(baseName + SUFFIX);
-            }
-        }
+        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+        String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
+        String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
+//        if ((modValue != null && !"".equals(modValue)) || (month != null && !"".equals(month))) {
+            String baseName = tableName.substring(0, tableName.lastIndexOf(UNDERLINE));
+            introspectedTable.setSqlMapAliasedFullyQualifiedRuntimeTableName(baseName + SUFFIX);
+            introspectedTable.setSqlMapFullyQualifiedRuntimeTableName(baseName + SUFFIX);
+//        }
     }
 
     @Override
@@ -280,7 +278,7 @@ public class SliceTablePlugin extends PluginAdapter {
     }
 
     private boolean dynamicTableName(XmlElement element, IntrospectedTable introspectedTable) {
-        if (needPartition(introspectedTable)) {
+//        if (needPartition(introspectedTable)) {
             TextElement sqlhead = (TextElement) element.getElements().get(0);
             try {
                 String dynamicTableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
@@ -302,7 +300,7 @@ public class SliceTablePlugin extends PluginAdapter {
             } catch (IllegalAccessException e) {
                 System.err.println("generate dynamic table name error" + e);
             }
-        }
+//        }
         return true;
     }
 
