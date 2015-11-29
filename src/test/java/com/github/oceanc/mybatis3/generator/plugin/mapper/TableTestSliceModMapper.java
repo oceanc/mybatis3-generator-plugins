@@ -33,5 +33,5 @@ public interface TableTestSliceModMapper {
 
     Long sumByExample(TableTestSliceModExample example);
 
-    void batchInsert(List<TableTestSliceMod> items);
+    void batchInsert(@Param("items") List<TableTestSliceMod> items);
 }

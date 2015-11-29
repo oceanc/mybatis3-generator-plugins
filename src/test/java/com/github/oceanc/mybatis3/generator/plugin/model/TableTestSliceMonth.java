@@ -16,8 +16,6 @@ public class TableTestSliceMonth implements Serializable {
 
     private Date sliceMonthId;
 
-    private String tableNameSuffix;
-
     @JsonProperty("jacksonProperty1")
     private Long jacksonId1;
 
@@ -32,6 +30,8 @@ public class TableTestSliceMonth implements Serializable {
     private Integer couldSumCol;
 
     private static final long serialVersionUID = 1L;
+
+    private String tableNameSuffix;
 
     private String updateSql;
 

@@ -74,5 +74,5 @@ public class SumSelectivePlugin extends PluginAdapter {
             "    <if test=\"_parameter != null\" >\n" +
             "      <include refid=\"Example_Where_Clause\" />\n" +
             "    </if>\n" +
-            "</select>";
+            "  </select>";
 }

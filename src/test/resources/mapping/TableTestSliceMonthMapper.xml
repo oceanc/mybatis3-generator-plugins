@@ -254,11 +254,14 @@
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
-</select>
-   <insert id="batchInsert">
-    insert into TABLE_TEST_SLICE_${tableNameSuffix} ( <include refid="Base_Column_List"/> )
+  </select>
+  <insert id="batchInsert">
+    <bind name="tableNameSuffix" value="items.get(0).getTableNameSuffix()" />
+    insert into TABLE_TEST_SLICE_${tableNameSuffix}  (SLICE_MONTH_ID, JACKSON_ID1, VERSION, 
+        JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
+        )
     values
-    <foreach collection="list" item="item" index="index" separator=",">
+    <foreach collection="items" item="item" index="index" separator=",">
       (#{item.sliceMonthId,jdbcType=TIMESTAMP}, #{item.jacksonId1,jdbcType=BIGINT}, 0, 
         #{item.jacksonId2,jdbcType=VARCHAR}, #{item.jacksonTime,jdbcType=TIMESTAMP}, #{item.couldSumCol,jdbcType=INTEGER}
         )

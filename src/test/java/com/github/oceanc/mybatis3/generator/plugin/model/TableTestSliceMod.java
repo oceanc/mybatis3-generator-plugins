@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.TimeZone;
 import lombok.Data;
@@ -14,8 +15,6 @@ public class TableTestSliceMod implements Serializable {
     private Long id;
 
     private Long sliceModId;
-
-    private String tableNameSuffix;
 
     @JsonProperty("jacksonProperty1")
     private Long jacksonId1;
@@ -32,6 +31,8 @@ public class TableTestSliceMod implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String tableNameSuffix;
+
     private String updateSql;
 
     public void setSliceModId(Long sliceModId) {
@@ -43,7 +44,7 @@ public class TableTestSliceMod implements Serializable {
                 if (Character.isDigit(c)) sb.append(c);
                 else nan += c;
             }
-            long lid = Long.parseLong(sb.toString());
+            long lid = new BigDecimal(sb.toString()).longValue();
             if(nan > 0) lid += 83 + nan;
             this.tableNameSuffix = (Math.abs(lid) % 83) + "";
         }

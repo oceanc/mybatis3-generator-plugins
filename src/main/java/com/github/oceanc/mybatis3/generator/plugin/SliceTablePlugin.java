@@ -24,20 +24,22 @@ public class SliceTablePlugin extends PluginAdapter {
 
     @Override
     public void initialized(IntrospectedTable introspectedTable) {
-        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-        String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
-        String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
-//        if ((modValue != null && !"".equals(modValue)) || (month != null && !"".equals(month))) {
-            String baseName = tableName.substring(0, tableName.lastIndexOf(UNDERLINE));
-            introspectedTable.setSqlMapAliasedFullyQualifiedRuntimeTableName(baseName + SUFFIX);
-            introspectedTable.setSqlMapFullyQualifiedRuntimeTableName(baseName + SUFFIX);
-//        }
+        if (needPartition(introspectedTable)) {
+            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+            String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
+            String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
+            if ((modValue != null && !"".equals(modValue)) || (month != null && !"".equals(month))) {
+                String baseName = tableName.substring(0, tableName.lastIndexOf(UNDERLINE));
+                introspectedTable.setSqlMapAliasedFullyQualifiedRuntimeTableName(baseName + SUFFIX);
+                introspectedTable.setSqlMapFullyQualifiedRuntimeTableName(baseName + SUFFIX);
+            }
+        }
     }
 
     @Override
     public boolean modelExampleClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
         if (needPartition(introspectedTable)) {
+            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
             String relColumn = introspectedTable.getTableConfigurationProperty(REL_COLUMN);
             String modValue = introspectedTable.getTableConfigurationProperty(MOD_VALUE);
             String month = introspectedTable.getTableConfigurationProperty(TIME_VALUE);
@@ -65,12 +67,13 @@ public class SliceTablePlugin extends PluginAdapter {
                 expression[4] = "if (Character.isDigit(c)) sb.append(c);";
                 expression[5] = "else nan += c;";
                 expression[6] = "}";
-                expression[7] = "long lid = Long.parseLong(sb.toString());";
+                expression[7] = "long lid = new BigDecimal(sb.toString()).longValue();";
                 expression[8] = "if(nan > 0) lid += " + modValue + " + nan;";
                 expression[9] = "this." + SUFFIX_FIELD + " = (Math.abs(lid) % " + modValue + ") + \"\";";
                 expression[10] = "}";
                 expression[11] = "return this;";
                 Method method = makePartitionMethod(ptype, topLevelClass.getType(), fieldName, tableName, expression);
+                topLevelClass.addImportedType(BIGDECIMAL_TYPE);
                 topLevelClass.addMethod(method);
                 System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
 //                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
@@ -89,22 +92,26 @@ public class SliceTablePlugin extends PluginAdapter {
                 System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
 //                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
             }
+            PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
         }
-        PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
         return true;
     }
 
     @Override
     public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-        PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+        if (needPartition(introspectedTable)) {
+            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+            PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+        }
         return true;
     }
 
     @Override
     public boolean modelRecordWithBLOBsClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-        PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+        if (needPartition(introspectedTable)) {
+            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+            PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+        }
         return true;
     }
 
@@ -130,13 +137,13 @@ public class SliceTablePlugin extends PluginAdapter {
                     expression[4] = "if (Character.isDigit(c)) sb.append(c);";
                     expression[5] = "else nan += c;";
                     expression[6] = "}";
-                    expression[7] = "long lid = Long.parseLong(sb.toString());";
+                    expression[7] = "long lid = new BigDecimal(sb.toString()).longValue();";
                     expression[8] = "if(nan > 0) lid += " + modValue + " + nan;";
                     expression[9] = "this." + SUFFIX_FIELD + " = (Math.abs(lid) % " + modValue + ") + \"\";";
                     expression[10] = "}";
                     method.addBodyLines(Arrays.asList(expression));
+                    topLevelClass.addImportedType(BIGDECIMAL_TYPE);
                     System.out.println("-----------------" + topLevelClass.getType().getShortName() + " modify method " + method.getName() + " for update field " + SUFFIX_FIELD);
-//                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
                 } else if (month != null && !"".equals(month)) {
                     int mc = Integer.parseInt(month);
                     if (mc < 1 || mc > 12) {
@@ -153,8 +160,6 @@ public class SliceTablePlugin extends PluginAdapter {
                     method.addBodyLines(Arrays.asList(expression));
                     topLevelClass.addImportedType(CALENDAR_TYPE);
                     System.out.println("-----------------" + topLevelClass.getType().getShortName() + " modify method " + method.getName() + " for update field " + SUFFIX_FIELD);
-//                    PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
-
                 }
             }
         }
@@ -207,7 +212,7 @@ public class SliceTablePlugin extends PluginAdapter {
         return method;
     }
 
-    private boolean needPartition(IntrospectedTable introspectedTable) {
+    protected static boolean needPartition(IntrospectedTable introspectedTable) {
         String relColumn = introspectedTable.getTableConfigurationProperty(REL_COLUMN);
         return relColumn != null && !"".equals(relColumn);
     }
@@ -278,7 +283,7 @@ public class SliceTablePlugin extends PluginAdapter {
     }
 
     private boolean dynamicTableName(XmlElement element, IntrospectedTable introspectedTable) {
-//        if (needPartition(introspectedTable)) {
+        if (needPartition(introspectedTable)) {
             TextElement sqlhead = (TextElement) element.getElements().get(0);
             try {
                 String dynamicTableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
@@ -300,7 +305,7 @@ public class SliceTablePlugin extends PluginAdapter {
             } catch (IllegalAccessException e) {
                 System.err.println("generate dynamic table name error" + e);
             }
-//        }
+        }
         return true;
     }
 
@@ -320,6 +325,7 @@ public class SliceTablePlugin extends PluginAdapter {
     private final static FullyQualifiedJavaType STRING_TYPE = new FullyQualifiedJavaType("java.lang.String");
     private final static FullyQualifiedJavaType DATE_TYPE = new FullyQualifiedJavaType("java.util.Date");
     private final static FullyQualifiedJavaType CALENDAR_TYPE = new FullyQualifiedJavaType("java.util.Calendar");
+    private final static FullyQualifiedJavaType BIGDECIMAL_TYPE = new FullyQualifiedJavaType("java.math.BigDecimal");
 
     private final static String UNDERLINE = "_";
     private final static String PARTITION_FACTOR = "partitionFactor";

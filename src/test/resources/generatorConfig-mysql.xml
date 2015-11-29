@@ -42,7 +42,7 @@
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
-        <table tableName="TABLE_TEST_SLICE_MOD" domainObjectName="TableTestSliceMod">
+        <table tableName="TABLE_TEST_SLICE_MOD_0" domainObjectName="TableTestSliceMod">
             <property name="sliceMod" value="83"/>
             <property name="sliceColumn" value="SLICE_MOD_ID"/>
             <property name="jacksonColumns" value="JACKSON_ID1,JACKSON_ID2"/>

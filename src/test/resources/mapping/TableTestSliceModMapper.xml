@@ -77,7 +77,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from TABLE_TEST_SLICE_${tableNameSuffix}
+    from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,15 +88,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
     select 
     <include refid="Base_Column_List" />
-    from TABLE_TEST_SLICE_${tableNameSuffix}
+    from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     where ID = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
-    delete from TABLE_TEST_SLICE_${tableNameSuffix}
+    delete from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     where ID = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" >
-    delete from TABLE_TEST_SLICE_${tableNameSuffix}
+    delete from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -105,7 +105,7 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into TABLE_TEST_SLICE_${tableNameSuffix} (SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, 
+    insert into TABLE_TEST_SLICE_MOD_${tableNameSuffix} (SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, 
       JACKSON_TIME, COULD_SUM_COL, VERSION
       )
     values (#{sliceModId,jdbcType=BIGINT}, #{jacksonId1,jdbcType=BIGINT}, #{jacksonId2,jdbcType=VARCHAR}, 
@@ -116,7 +116,7 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into TABLE_TEST_SLICE_${tableNameSuffix}
+    insert into TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="sliceModId != null" >
         SLICE_MOD_ID,
@@ -155,13 +155,13 @@
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="java.lang.Integer" >
-    select count(*) from TABLE_TEST_SLICE_${tableNameSuffix}
+    select count(*) from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update <choose><when test="record.tableNameSuffix != null">TABLE_TEST_SLICE_${record.tableNameSuffix}</when><when test="example.tableNameSuffix != null">TABLE_TEST_SLICE_${example.tableNameSuffix}</when><otherwise>TABLE_TEST_SLICE_ </otherwise></choose>
+    update <choose><when test="record.tableNameSuffix != null">TABLE_TEST_SLICE_MOD_${record.tableNameSuffix}</when><when test="example.tableNameSuffix != null">TABLE_TEST_SLICE_MOD_${example.tableNameSuffix}</when><otherwise>TABLE_TEST_SLICE_MOD_ </otherwise></choose>
     <set >
       <if test="record.id != null" >
         ID = #{record.id,jdbcType=BIGINT},
@@ -191,7 +191,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update <choose><when test="record.tableNameSuffix != null">TABLE_TEST_SLICE_${record.tableNameSuffix}</when><when test="example.tableNameSuffix != null">TABLE_TEST_SLICE_${example.tableNameSuffix}</when><otherwise>TABLE_TEST_SLICE_ </otherwise></choose>
+    update <choose><when test="record.tableNameSuffix != null">TABLE_TEST_SLICE_MOD_${record.tableNameSuffix}</when><when test="example.tableNameSuffix != null">TABLE_TEST_SLICE_MOD_${example.tableNameSuffix}</when><otherwise>TABLE_TEST_SLICE_MOD_ </otherwise></choose>
     set ID = #{record.id,jdbcType=BIGINT},
       SLICE_MOD_ID = #{record.sliceModId,jdbcType=BIGINT},
       JACKSON_ID1 = #{record.jacksonId1,jdbcType=BIGINT},
@@ -204,7 +204,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
-    update TABLE_TEST_SLICE_${tableNameSuffix}
+    update TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <set >
       <if test="sliceModId != null" >
         SLICE_MOD_ID = #{sliceModId,jdbcType=BIGINT},
@@ -226,7 +226,7 @@
     where ID = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
-    update TABLE_TEST_SLICE_${tableNameSuffix}
+    update TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     set SLICE_MOD_ID = #{sliceModId,jdbcType=BIGINT},
       JACKSON_ID1 = #{jacksonId1,jdbcType=BIGINT},
       JACKSON_ID2 = #{jacksonId2,jdbcType=VARCHAR},
@@ -241,7 +241,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from TABLE_TEST_SLICE_${tableNameSuffix}
+    from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -250,15 +250,18 @@
     </if>
   </select>
   <select id="sumByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="long" >
-    select sum(${sumCol}) from TABLE_TEST_SLICE_${tableNameSuffix}
+    select sum(${sumCol}) from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
-</select>
-   <insert id="batchInsert">
-    insert into TABLE_TEST_SLICE_${tableNameSuffix} ( <include refid="Base_Column_List"/> )
+  </select>
+  <insert id="batchInsert">
+    <bind name="tableNameSuffix" value="items.get(0).getTableNameSuffix()" />
+    insert into TABLE_TEST_SLICE_MOD_${tableNameSuffix}  (SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, 
+        JACKSON_TIME, COULD_SUM_COL, VERSION
+        )
     values
-    <foreach collection="list" item="item" index="index" separator=",">
+    <foreach collection="items" item="item" index="index" separator=",">
       (#{item.sliceModId,jdbcType=BIGINT}, #{item.jacksonId1,jdbcType=BIGINT}, #{item.jacksonId2,jdbcType=VARCHAR}, 
       #{item.jacksonTime,jdbcType=TIMESTAMP}, #{item.couldSumCol,jdbcType=INTEGER}, 0
         )

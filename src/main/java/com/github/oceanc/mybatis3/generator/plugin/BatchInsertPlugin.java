@@ -25,8 +25,9 @@ public class BatchInsertPlugin extends PluginAdapter {
         Method method = new Method();
         method.setName(methodName);
         method.setVisibility(JavaVisibility.PUBLIC);
-        method.addParameter(new Parameter(paramType, "items"));
+        method.addParameter(new Parameter(paramType, "items", "@Param(\"items\")"));
         interfaze.addMethod(method);
+        interfaze.addImportedType(PARAM_ANOTS);
         System.out.println("-----------------" + interfaze.getType().getShortName() + " add method " + methodName + ".");
         return true;
     }
@@ -43,11 +44,24 @@ public class BatchInsertPlugin extends PluginAdapter {
                 }
             }
 
-            String xx = "      (" + values.toString().split("values \\(")[1];
+            String[] insertStr = values.toString().split("values \\(");
+            String fs = insertStr[0];
+            fs = " (" + fs.split(" \\(")[1].trim();
+
+            String xx = "      (" + insertStr[1];
             xx = xx.replaceAll("#\\{", "#\\{item.");
 
+            String bind = "";
+            if (SliceTablePlugin.needPartition(introspectedTable)) {
+                bind = "    <bind name=\"tableNameSuffix\" value=\"items.get(0).getTableNameSuffix()\" />\n";
+            }
+
             String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-            String xml = MessageFormat.format(template, tableName, xx);
+            if(!tableName.contains("_${tableNameSuffix}") && SliceTablePlugin.needPartition(introspectedTable)) {
+                tableName = tableName + "_${tableNameSuffix}";
+            }
+
+            String xml = MessageFormat.format(template, bind, tableName, fs, xx);
             document.getRootElement().getElements().add(new TextElement(xml));
             return true;
         }
@@ -70,12 +84,13 @@ public class BatchInsertPlugin extends PluginAdapter {
         return null;
     }
 
+    private final static FullyQualifiedJavaType PARAM_ANOTS = new FullyQualifiedJavaType("org.apache.ibatis.annotations.Param");
     private final static String methodName = "batchInsert";
     private final static String template =
-            " <insert id=\"" + methodName + "\">\n" +
-            "    insert into {0} ( <include refid=\"Base_Column_List\"/> )\n" +
+            "<insert id=\"" + methodName + "\">\n{0}" +
+            "    insert into {1} {2}\n" +
             "    values\n" +
-            "    <foreach collection=\"list\" item=\"item\" index=\"index\" separator=\",\">\n{1}" +
+            "    <foreach collection=\"items\" item=\"item\" index=\"index\" separator=\",\">\n{3}" +
             "    </foreach>\n" +
             "  </insert>";
 }

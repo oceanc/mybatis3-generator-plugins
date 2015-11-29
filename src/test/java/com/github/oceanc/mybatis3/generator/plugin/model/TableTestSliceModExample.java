@@ -1,5 +1,6 @@
 package com.github.oceanc.mybatis3.generator.plugin.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,7 @@ public class TableTestSliceModExample {
                 if (Character.isDigit(c)) sb.append(c);
                 else nan += c;
             }
-            long lid = Long.parseLong(sb.toString());
+            long lid = new BigDecimal(sb.toString()).longValue();
             if(nan > 0) lid += 83 + nan;
             this.tableNameSuffix = (Math.abs(lid) % 83) + "";
         }

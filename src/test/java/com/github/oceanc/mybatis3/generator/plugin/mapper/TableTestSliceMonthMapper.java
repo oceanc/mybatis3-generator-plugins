@@ -33,5 +33,5 @@ public interface TableTestSliceMonthMapper {
 
     Long sumByExample(TableTestSliceMonthExample example);
 
-    void batchInsert(List<TableTestSliceMonth> items);
+    void batchInsert(@Param("items") List<TableTestSliceMonth> items);
 }
