@@ -84,6 +84,9 @@
     <if test="orderByClause != null" >
       order by ${orderByClause}
     </if>
+    <if test="offset != null and limit != null">
+      limit ${offset}, ${limit}
+    </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMonth" >
     select 
@@ -256,15 +259,17 @@
     </if>
   </select>
   <insert id="batchInsert">
-    <bind name="tableNameSuffix" value="items.get(0).getTableNameSuffix()" />
-    insert into TABLE_TEST_SLICE_${tableNameSuffix}  (SLICE_MONTH_ID, JACKSON_ID1, VERSION, 
+    <if test="items.get(0) != null">
+      <bind name="tableNameSuffix" value="items.get(0).getTableNameSuffix()" />
+      insert into TABLE_TEST_SLICE_${tableNameSuffix}  (SLICE_MONTH_ID, JACKSON_ID1, VERSION, 
         JACKSON_ID2, JACKSON_TIME, COULD_SUM_COL
         )
-    values
-    <foreach collection="items" item="item" index="index" separator=",">
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
       (#{item.sliceMonthId,jdbcType=TIMESTAMP}, #{item.jacksonId1,jdbcType=BIGINT}, 0, 
         #{item.jacksonId2,jdbcType=VARCHAR}, #{item.jacksonTime,jdbcType=TIMESTAMP}, #{item.couldSumCol,jdbcType=INTEGER}
         )
-    </foreach>
+      </foreach>
+    </if>
   </insert>
 </mapper>

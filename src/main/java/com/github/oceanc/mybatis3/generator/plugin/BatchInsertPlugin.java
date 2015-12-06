@@ -34,6 +34,16 @@ public class BatchInsertPlugin extends PluginAdapter {
 
     @Override
     public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
+        String bind = "";
+        if (SliceTablePlugin.needPartition(introspectedTable)) {
+            bind = "<bind name=\"tableNameSuffix\" value=\"items.get(0).getTableNameSuffix()\" />\n";
+        }
+
+        String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+        if(!tableName.contains("_${tableNameSuffix}") && SliceTablePlugin.needPartition(introspectedTable)) {
+            tableName = tableName + "_${tableNameSuffix}";
+        }
+
         XmlElement node = findInsertNode(document);
         if (node != null) {
             StringBuilder values = new StringBuilder();
@@ -50,16 +60,6 @@ public class BatchInsertPlugin extends PluginAdapter {
 
             String xx = "      (" + insertStr[1];
             xx = xx.replaceAll("#\\{", "#\\{item.");
-
-            String bind = "";
-            if (SliceTablePlugin.needPartition(introspectedTable)) {
-                bind = "    <bind name=\"tableNameSuffix\" value=\"items.get(0).getTableNameSuffix()\" />\n";
-            }
-
-            String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-            if(!tableName.contains("_${tableNameSuffix}") && SliceTablePlugin.needPartition(introspectedTable)) {
-                tableName = tableName + "_${tableNameSuffix}";
-            }
 
             String xml = MessageFormat.format(template, bind, tableName, fs, xx);
             document.getRootElement().getElements().add(new TextElement(xml));
@@ -87,10 +87,13 @@ public class BatchInsertPlugin extends PluginAdapter {
     private final static FullyQualifiedJavaType PARAM_ANOTS = new FullyQualifiedJavaType("org.apache.ibatis.annotations.Param");
     private final static String methodName = "batchInsert";
     private final static String template =
-            "<insert id=\"" + methodName + "\">\n{0}" +
-            "    insert into {1} {2}\n" +
-            "    values\n" +
-            "    <foreach collection=\"items\" item=\"item\" index=\"index\" separator=\",\">\n{3}" +
-            "    </foreach>\n" +
+            "<insert id=\"" + methodName + "\">\n" +
+            "    <if test=\"items.get(0) != null\">\n" +
+            "      {0}" +
+            "      insert into {1} {2}\n" +
+            "      values\n" +
+            "      <foreach collection=\"items\" item=\"item\" index=\"index\" separator=\",\">\n{3}" +
+            "      </foreach>\n" +
+            "    </if>\n" +
             "  </insert>";
 }

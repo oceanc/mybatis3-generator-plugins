@@ -2,11 +2,13 @@ package com.github.oceanc.mybatis3.generator.plugin;
 
 import com.github.oceanc.mybatis3.generator.plugin.mapper.TableTestSliceModMapper;
 import com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod;
+import com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +54,16 @@ public class MapperTest {
         list.add(mod2);
 
         mapper.batchInsert(list);
-
         session.commit();
+
+        TableTestSliceModExample example = new TableTestSliceModExample();
+        example.page(0, 2);
+        example.setTableNameSuffix("0");
+        List<TableTestSliceMod> ls =  mapper.selectByExample(example);
+        System.out.println(ls.get(0).getSliceModId() == 83);
+        System.out.println(ls.get(1).getSliceModId() == 166);
+
+        Date date = mapper.minJacksonTimByExample(example);
+        System.out.println(SimpleDateFormat.getDateInstance().format(date));
     }
 }

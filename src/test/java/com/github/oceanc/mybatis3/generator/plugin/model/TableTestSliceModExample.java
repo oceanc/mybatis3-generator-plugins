@@ -16,6 +16,10 @@ public class TableTestSliceModExample {
 
     private String sumCol;
 
+    private Integer offset;
+
+    private Integer limit;
+
     public TableTestSliceModExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
@@ -69,6 +73,8 @@ public class TableTestSliceModExample {
         distinct = false;
         this.tableNameSuffix = null;
         this.sumCol = null;
+        this.offset = null;
+        this.limit = null;
     }
 
     public TableTestSliceModExample partitionFactorSliceModId(Long sliceModId) {
@@ -134,6 +140,28 @@ public class TableTestSliceModExample {
 
     public TableTestSliceModExample sumVersion() {
         this.sumCol="VERSION";
+        return this;
+    }
+
+    public Integer getOffset() {
+        return this.offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getLimit() {
+        return this.limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public TableTestSliceModExample page(int offset, int limit) {
+        this.offset = offset;
+        this.limit = limit;
         return this;
     }
 

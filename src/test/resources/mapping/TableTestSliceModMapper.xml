@@ -84,6 +84,9 @@
     <if test="orderByClause != null" >
       order by ${orderByClause}
     </if>
+    <if test="offset != null and limit != null">
+      limit ${offset}, ${limit}
+    </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod" >
     select 
@@ -256,15 +259,41 @@
     </if>
   </select>
   <insert id="batchInsert">
-    <bind name="tableNameSuffix" value="items.get(0).getTableNameSuffix()" />
-    insert into TABLE_TEST_SLICE_MOD_${tableNameSuffix}  (SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, 
+    <if test="items.get(0) != null">
+      <bind name="tableNameSuffix" value="items.get(0).getTableNameSuffix()" />
+      insert into TABLE_TEST_SLICE_MOD_${tableNameSuffix}  (SLICE_MOD_ID, JACKSON_ID1, JACKSON_ID2, 
         JACKSON_TIME, COULD_SUM_COL, VERSION
         )
-    values
-    <foreach collection="items" item="item" index="index" separator=",">
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
       (#{item.sliceModId,jdbcType=BIGINT}, #{item.jacksonId1,jdbcType=BIGINT}, #{item.jacksonId2,jdbcType=VARCHAR}, 
       #{item.jacksonTime,jdbcType=TIMESTAMP}, #{item.couldSumCol,jdbcType=INTEGER}, 0
         )
-    </foreach>
+      </foreach>
+    </if>
   </insert>
+  <select id="minSliceModIByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="java.lang.Long">
+    select min(SLICE_MOD_ID) from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <select id="minJacksonTimByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample" resultType="java.util.Date">
+    select min(JACKSON_TIME) from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <select id="maxSliceModIByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample"  resultType="java.lang.Long">
+    select max(SLICE_MOD_ID) from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <select id="maxJacksonTimByExample" parameterType="com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample"  resultType="java.util.Date">
+    select max(JACKSON_TIME) from TABLE_TEST_SLICE_MOD_${tableNameSuffix}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
 </mapper>

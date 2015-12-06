@@ -6,7 +6,7 @@
 
     <groupId>com.github.oceanc</groupId>
     <artifactId>mybatis3-generator-plugin</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <packaging>jar</packaging>
     <name>MyBatis3 Generator Plugins</name>
 

@@ -2,6 +2,7 @@ package com.github.oceanc.mybatis3.generator.plugin.mapper;
 
 import com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceMod;
 import com.github.oceanc.mybatis3.generator.plugin.model.TableTestSliceModExample;
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -34,4 +35,12 @@ public interface TableTestSliceModMapper {
     Long sumByExample(TableTestSliceModExample example);
 
     void batchInsert(@Param("items") List<TableTestSliceMod> items);
+
+    Long minSliceModIByExample(TableTestSliceModExample example);
+
+    Date minJacksonTimByExample(TableTestSliceModExample example);
+
+    Long maxSliceModIByExample(TableTestSliceModExample example);
+
+    Date maxJacksonTimByExample(TableTestSliceModExample example);
 }

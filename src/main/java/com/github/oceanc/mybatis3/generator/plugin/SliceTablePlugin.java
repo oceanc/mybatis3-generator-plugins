@@ -92,7 +92,7 @@ public class SliceTablePlugin extends PluginAdapter {
                 System.out.println("-----------------" + topLevelClass.getType().getShortName() + " add method " + method.getName() + ".");
 //                PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
             }
-            PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+            PluginUtils.addProperty(SUFFIX_FIELD, STRING_TYPE, topLevelClass, this.getContext(), tableName);
         }
         return true;
     }
@@ -101,7 +101,7 @@ public class SliceTablePlugin extends PluginAdapter {
     public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         if (needPartition(introspectedTable)) {
             String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-            PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+            PluginUtils.addProperty(SUFFIX_FIELD, STRING_TYPE, topLevelClass, this.getContext(), tableName);
         }
         return true;
     }
@@ -110,7 +110,7 @@ public class SliceTablePlugin extends PluginAdapter {
     public boolean modelRecordWithBLOBsClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         if (needPartition(introspectedTable)) {
             String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-            PluginUtils.addProperty(SUFFIX_FIELD, topLevelClass, this.getContext(), tableName);
+            PluginUtils.addProperty(SUFFIX_FIELD, STRING_TYPE, topLevelClass, this.getContext(), tableName);
         }
         return true;
     }

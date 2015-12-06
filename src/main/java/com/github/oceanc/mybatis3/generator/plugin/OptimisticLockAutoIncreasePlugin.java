@@ -10,7 +10,7 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 import java.util.List;
 
 /**
- * Created by chengyang on 15-4-17
+ * Created by chengyang
  */
 public class OptimisticLockAutoIncreasePlugin extends PluginAdapter {
 

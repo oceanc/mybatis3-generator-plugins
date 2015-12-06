@@ -16,6 +16,10 @@ public class TableTestSliceMonthExample {
 
     private String sumCol;
 
+    private Integer offset;
+
+    private Integer limit;
+
     public TableTestSliceMonthExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
@@ -69,6 +73,8 @@ public class TableTestSliceMonthExample {
         distinct = false;
         this.tableNameSuffix = null;
         this.sumCol = null;
+        this.offset = null;
+        this.limit = null;
     }
 
     public TableTestSliceMonthExample partitionFactorSliceMonthId(Date sliceMonthId) {
@@ -129,6 +135,28 @@ public class TableTestSliceMonthExample {
 
     public TableTestSliceMonthExample sumCouldSumCol() {
         this.sumCol="COULD_SUM_COL";
+        return this;
+    }
+
+    public Integer getOffset() {
+        return this.offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getLimit() {
+        return this.limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public TableTestSliceMonthExample page(int offset, int limit) {
+        this.offset = offset;
+        this.limit = limit;
         return this;
     }
 

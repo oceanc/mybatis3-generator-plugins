@@ -35,7 +35,7 @@ public class SumSelectivePlugin extends PluginAdapter {
     @Override
     public boolean modelExampleClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
-        PluginUtils.addProperty(SUM_COL_FIELD, topLevelClass, this.getContext(), tableName);
+        PluginUtils.addProperty(SUM_COL_FIELD, STRING_TYPE, topLevelClass, this.getContext(), tableName);
 
         List<IntrospectedColumn> columns = introspectedTable.getAllColumns();
         for (IntrospectedColumn column : columns) {
@@ -58,6 +58,9 @@ public class SumSelectivePlugin extends PluginAdapter {
     public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
         String paramType = introspectedTable.getExampleType();
         String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+        if(!tableName.contains("_${tableNameSuffix}") && SliceTablePlugin.needPartition(introspectedTable)) {
+            tableName = tableName + "_${tableNameSuffix}";
+        }
         String xml = MessageFormat.format(template, paramType, tableName);
 
         document.getRootElement().getElements().add(new TextElement(xml));
@@ -67,6 +70,7 @@ public class SumSelectivePlugin extends PluginAdapter {
 
     private final static String SUM_COL_FIELD = "sumCol";
     private final static FullyQualifiedJavaType LONG_TYPE = new FullyQualifiedJavaType("java.lang.Long");
+    private final static FullyQualifiedJavaType STRING_TYPE = FullyQualifiedJavaType.getStringInstance();
 
     private static final String template = "" +
             "<select id=\"sumByExample\" parameterType=\"{0}\" resultType=\"long\" >\n" +

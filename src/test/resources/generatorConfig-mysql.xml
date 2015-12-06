@@ -16,6 +16,8 @@
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.OptimisticLockAutoIncreasePlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.BatchInsertPlugin"/>
         <plugin type="com.github.oceanc.mybatis3.generator.plugin.LombokAnnotationPlugin"/>
+        <plugin type="com.github.oceanc.mybatis3.generator.plugin.PaginationPlugin"/>
+        <plugin type="com.github.oceanc.mybatis3.generator.plugin.MinMaxPlugin"/>
         <!--去除注释-->
         <commentGenerator type="DEFAULT">
             <property name="suppressAllComments" value="true"/>
@@ -48,8 +50,8 @@
             <property name="jacksonColumns" value="JACKSON_ID1,JACKSON_ID2"/>
             <property name="jacksonProperties" value="jacksonProperty1,jacksonProperty2"/>
             <property name="jacksonFormats" value="JACKSON_TIME@yyyy-MM-dd HH:mm:ss"/>
-            <property name="whereSql" value="true"/>
-            <property name="updateSql" value="true"/>
+            <property name="minColumns" value="SLICE_MOD_ID,JACKSON_TIME"/>
+            <property name="maxColumns" value="SLICE_MOD_ID,JACKSON_TIME"/>
             <property name="optimisticLockColumn" value="VERSION"/>
             <generatedKey column="ID" sqlStatement="MySql" identity="true" />
         </table>
@@ -59,8 +61,6 @@
             <property name="jacksonColumns" value="JACKSON_ID1,JACKSON_ID2"/>
             <property name="jacksonProperties" value="jacksonProperty1,jacksonProperty2"/>
             <property name="jacksonFormats" value="JACKSON_TIME@yyyy-MM-dd HH:mm:ss"/>
-            <property name="whereSql" value="true"/>
-            <property name="updateSql" value="true"/>
             <property name="optimisticLockColumn" value="VERSION"/>
             <generatedKey column="ID" sqlStatement="MySql" identity="true" />
         </table>
