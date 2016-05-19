@@ -1,6 +1,6 @@
 #Introduction
 
-mybatis3-generator-plugins的目的是扩展[MBG](http://www.mybatis.org/generator)的代码生成功能。如其名称所示，通过mybatis3-generator-plugins生成的java代码遵循 MyBatis 3.x 的规范。以下内容假定用户熟悉[MBG](http://www.mybatis.org/generator)的基本配置和使用。
+mybatis3-generator-plugins的目的是扩展[MBG](http://www.mybatis.org/generator)的代码生成功能。如其名称所示，通过mybatis3-generator-plugins生成的java代码遵循 [MyBatis 3.x](http://www.mybatis.org/mybatis-3/) 的规范。以下内容假定用户熟悉[MBG](http://www.mybatis.org/generator)的基本配置和使用。
 
 ##NOTE:
 受sql dialect的限制，多数plugin目前仅支持 Mysql 5.x。
@@ -138,7 +138,6 @@ public class Account implements Serializable {
 ###Java sample
 
 ```java
-@Data
 public class Account implements Serializable {
     public String toJson() throws IOException {
         ... ...
@@ -149,7 +148,7 @@ public class Account implements Serializable {
 
 <br>
 ##LombokAnnotationPlugin
-该plugin是为了添加[lombok](https://projectlombok.org/)注解到生成的model类中，避免了java bean中繁琐的setter和getter。生成的代码看起来也更干净、紧凑。若使用此插件，需要额外依赖lombok。
+该plugin是为生成的model类添加[lombok](https://projectlombok.org/)注解，避免了java bean中繁琐的setter和getter。生成的代码看起来也更干净、紧凑。若使用此插件，需要额外依赖lombok。
 
 ###Java sample
 
@@ -166,7 +165,7 @@ public class Account implements Serializable {
 ##MinMaxPlugin
 
 ###Xml config：
-在[MyBatis GeneratorXML Configuration File](http://www.mybatis.org/generator/configreference/xmlconfig.html)的`<table>`元素中添加两个\<property\>：
+在[MyBatis GeneratorXML Configuration File](http://www.mybatis.org/generator/configreference/xmlconfig.html)的`<table>`元素中添加两个\<property\>（可选的）：
 
 ```xml
 <table tableName="Account_0" domainObjectName="Account">
@@ -174,8 +173,8 @@ public class Account implements Serializable {
     <property name="maxColumns" value="id,version"/>
 </table>
 ```
-* `minColumns`指可进行min操作的列，值由`,`分割的列名组成
-* `maxColumns`指可进行max操作的列，值由`,`分割的列名组成
+* `minColumns`是可进行min操作的列，值由`,`分割的列名组成
+* `maxColumns`是可进行max操作的列，值由`,`分割的列名组成
 
 ###Java sample
 
@@ -201,7 +200,7 @@ long max = mapper.maxIdByExample(example);
     <property name="optimisticLockColumn" value="version"/>
 </table>
 ```
-* `optimisticLockColumn `指可进行min操作的列，值由`,`分割的列名组成
+* `optimisticLockColumn`指具有版本信息语义的列，`version`是具体的列名
 
 ###Java sample
 
@@ -265,7 +264,7 @@ SliceTablePlugin目前支持两种分表命名方式：
 </table>
 ```
 * `sliceMonth `指按自然月分表，`1`指按单个自然月。**Note：目前只支持按单月分表，此处的值 1 无实际意义**
-* `sliceColumn`指取模所使用的列，`create_time`是具体列名
+* `sliceColumn`指时间类型的列，`create_time`是具体列名
 
 
 ###Java sample
@@ -336,10 +335,10 @@ mapper.deleteByExample(example);
 ####other
 当无法获得分表因子的值时、或者确定所操作的表名时，可以通过:
 
-* `record.setTableNameSuffix(...);`取代`record.setId(...);`或`record.setId(...);`
-* `example.setTableNameSuffix(...);`取代`example.partitionFactorId(...);`
+* `record.setTableNameSuffix(...)`取代`record.setId(...)`或`record.setId(...)`
+* `example.setTableNameSuffix(...)`取代`example.partitionFactorId(...)`
 
-<mark>WARNING</mark>：由于`setTableNameSuffix`的参数是无约束的String，所以存在SQL injection的隐患，需谨慎使用。
+<tt style="background-color:#F9FF00;"> WARNING</tt>：由于`setTableNameSuffix`的参数是String类型，在 Mybatis3 的 mapper xml 中生成`${}`变量，这种变量不会做sql转义，而直接嵌入到sql语句中。如果以用户输入作为`setTableNameSuffix`的参数，会导致潜在的`SQL Injection`攻击，需谨慎使用。
 
 
 <br>
@@ -371,8 +370,7 @@ example.createCriteria().andAgeEqualTo(22);
 mapper.updateByExampleSelective(record.setAge, example);
 ```
 如果使用了SliceTablePlugin，别忘了对分表因子赋值：`example.partitionFactorCreateTime(...)`  
-<mark>WARNING</mark>：由于`setUpdateSql`的参数是无约束的String，所以存在SQL injection的隐患，需谨慎使用。
-
+<tt style="background-color:#F9FF00;"> WARNING</tt>：由于`setUpdateSql`的参数是String类型，在 Mybatis3 的 mapper xml 中生成`${}`变量，这种变量不会做sql转义，而直接嵌入到sql语句中。如果以用户输入作为`setUpdateSql`的参数，会导致潜在的`SQL Injection`攻击，需谨慎使用。
 
 
 <br>
@@ -388,4 +386,4 @@ example.createCriteria().andAgeEqualTo(33).addConditionSql("version =" + v + " +
 List<Account> as = mapper.selectByExample(example);
 ```
 如果使用了SliceTablePlugin，别忘了对分表因子赋值：`example.partitionFactorCreateTime(...)`  
-<mark>WARNING</mark>：由于`addConditionSql`的参数是无约束的String，所以存在SQL injection的隐患，需谨慎使用。
+<tt style="background-color:#F9FF00;"> WARNING</tt>：由于`addConditionSql`的参数是String类型，在 Mybatis3 的 mapper xml 中生成`${}`变量，这种变量不会做sql转义，而直接嵌入到sql语句中。如果以用户输入作为`addConditionSql`的参数，会导致潜在的`SQL Injection`攻击，需谨慎使用。
